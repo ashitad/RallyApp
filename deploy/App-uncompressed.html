@@ -10,7 +10,46 @@
                 Ext.define('CustomApp', {
     extend: 'Rally.app.App',
     componentCls: 'app',
-    items:{ html:'<a href="https://help.rallydev.com/apps/2.0rc3/doc/">App SDK 2.0rc3 Docs</a>'},
+    items:[
+        { html:'<a href="https://help.rallydev.com/apps/2.0rc3/doc/">App SDK 2.0rc3 Docs</a>'},
+        //Adding containers
+                    {
+                        xtype: 'container',
+                        itemId: 'top',
+                        style:{ 
+                            type: 'vbox',
+                            align: 'left',
+                            padding: 10
+                            }
+                    },
+                    {
+                        xtype: 'container',
+                        itemId: 'middle',
+                        style:{ 
+                            type: 'hbox',
+                            align: 'fit',
+                            padding: 20,
+                            marginBottom:'10px'
+                            }
+                    },
+                    {
+                        xtype: 'container',
+                        itemId: 'bottom',
+                        style:{ 
+                            type: 'hbox',
+                            align: 'fit',
+                            padding: 10,
+                           
+                            }
+                    }
+    
+    
+    ],
+    layout:{
+        type:'vbox',
+        align:'stretch',
+        padding:20
+    },
    
    //declaring all global variables.
     industryEpicStore : undefined,          //stores all epics of Industry Solutions.
@@ -21,57 +60,13 @@
    
     launch: function() {
         //Write app code here
-    this.globalContainer=Ext.create('Ext.container.Container',{
-        layout:{
-            type:'vbox',
-            align:'stretch'
-        }
-        
-    }); 
-    this.add(this.globalContainer);
-       
-       this.topContainer = Ext.create('Ext.container.Container',{
-            layout: {
-               
-                type: 'vbox',
-                align: 'left',
-                padding: 10
-            },
-            
-            
-        });
-        this.globalContainer.add(this.topContainer);
-        //this._loadTagPicker();
-        this._loadIndustryEpicDataStore();
-        
-        //Write code for the middle container
-         this.middleContainer=Ext.create('Ext.container.Container',{
-            
-            layout: {
-                type: 'hbox',
-                align: 'left',
-                padding: 10
-            },
-           
-            
-        });
-        this.globalContainer.add(this.middleContainer);
-        
-        //Write code for the bottom/grid container
-         this.bottomContainer=Ext.create('Ext.container.Container',{
-            
-            layout: {
-                type: 'hbox',
-                align: 'stretch'
-                
-            },
-           renderTo:Ext.getBody()
-            
-        });
-        this.globalContainer.add(this.bottomContainer);
+   
+            this._loadIndustryEpicDataStore();
+      
+     
         
         
-    },
+  },
      
     _loadIndustryEpicDataStore: function(){
             
@@ -108,8 +103,8 @@
             
         },
         
-        _loadEpicComboBox: function(){
-            if(this.industryEpicStore)
+    _loadEpicComboBox: function(){
+        if(this.industryEpicStore)
             {
                 //get all the epic data for populating combobox.
                 this._createAllEpicComboStore(this.industryEpicStore.getRecords());
@@ -134,17 +129,18 @@
                     
                     //add the combo box control to the app container.
                     
-                    this.topContainer.add(this.epicSelector);
+                
+                    this.down('#top').add(this.epicSelector);
                 }
             }
         },
         
        
-       _onEpicComboBoxLoad: function(){
+    _onEpicComboBoxLoad: function(){
             //required future implementation.
         },
         
-        _onEpicComboBoxSelect: function(){
+    _onEpicComboBoxSelect: function(){
             
             //retrive all epic info for selected item.
             this.selectedIndustryEpicID = this.down('#industryEpicCombobox').getValue();
@@ -152,7 +148,7 @@
             this._loadSelectedEpicDetailsFromStore();
         },
         
-        _loadSelectedEpicDetailsFromStore: function(){
+    _loadSelectedEpicDetailsFromStore: function(){
             
             if(this.industryEpicStore && this.selectedIndustryEpicID){
                 var records = this.industryEpicStore.getRecords();
@@ -165,9 +161,9 @@
             }
         },
            
-        _loadEpicDetailsPanel: function(){
+    _loadEpicDetailsPanel: function(){
             
-            if(this.selectedIndustryEpicData){
+        if(this.selectedIndustryEpicData){
                 //prepare display data for epic details panel.
                 console.log('selected epic data?', this.selectedIndustryEpicData);
                 var epicName = this.selectedIndustryEpicData.get('Name');
@@ -179,7 +175,7 @@
                 var targetLaunch = this.selectedIndustryEpicData.get('c_TargetLaunch') !== null?this.selectedIndustryEpicData.get('c_TargetLaunch').toString() : 'No Target Specified';
                 
                 //if the epic panel already exists update the item values.
-                if(this.epicDetailPanel)
+            if(this.epicDetailPanel)
                 {
                     console.log('update existing panel.');
                     this.epicDetailPanel.getForm().findField('name').setValue(epicName);
@@ -188,7 +184,7 @@
                     this.epicDetailPanel.getForm().findField('target_launch').setValue(targetLaunch);
                 }
                 //else create the epic details panel and display the epic data.
-                else
+            else
                 {
                     console.log('create new panel.');
                     this.epicDetailPanel = Ext.create('Ext.form.Panel', {
@@ -226,16 +222,16 @@
                             name: 'target_launch',
                             value: targetLaunch
                         }]
-                    });
+                });
                     
-                    //add the panel to the container.
-                    this.middleContainer.add(this.epicDetailPanel);
+                   
+                    this.down('#middle').add(this.epicDetailPanel);
                 }
             }
         },
         
         
-        _createAllEpicComboStore: function(){
+    _createAllEpicComboStore: function(){
         
         if(this.industryEpicStore)
         {
@@ -284,19 +280,39 @@
                     columnCfgs: [
                         'FormattedID',
                          'Name',
-                         'Project',
+                         'PercentDoneByStoryCount',
                          'Owner',
-                         'Parent',
-                         'Estimate',
-                         'State',
-                         'Tags',
+                         'Project',
                          'PlannedStartDate',
                          'PlannedEndDate',
-                         'PercentDoneByStoryCount'
-                     ]});
+                         'RefinedEstimate',
+                         'State',
+                         'Tags'
+                         
+                     ]
+                     /*,
+                     layout:{
+                         height
+                     }*/
+                     });
  
-        this.globalContainer.add(this.bottomContainer);
-        //console.log('Adding the grid',this.bottomContainer);
+        this.panelGrid=Ext.create('Ext.form.Panel', {
+                        renderTo: Ext.getBody(),
+                        layout: {
+                            type: 'vbox',
+                            align: 'stretch',
+                            padding: 10
+                        },
+                        
+                        items: [this.myGrid]
+                       
+                    });
+        
+        
+        
+        
+        
+        this.down('#bottom').add(this.panelGrid);
     },
    
 
@@ -319,7 +335,16 @@
             
                     this.myStore = Ext.create('Rally.data.wsapi.Store', {
                     model: 'PortfolioItem',
-                    fetch: ['Name', 'Project','State', 'FormattedID', 'Owner','Parent', 'Estimate','Tags','PlannedStartDate','PlannedEndDate','PercentDoneByStoryCount'],
+                    fetch: [ 'FormattedID',
+                         'Name',
+                         'PercentDoneByStoryCount',
+                         'Owner',
+                         'Project',
+                         'PlannedStartDate',
+                         'PlannedEndDate',
+                         'RefinedEstimate',
+                         'State',
+                         'Tags'],
                     autoLoad: true,
                     context: {
                        workspace: '/workspace/1089940415',
